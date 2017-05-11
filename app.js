@@ -1,5 +1,4 @@
 var api = require('./lib/botApi.js');
-var config = require('./config.json');
 
 var config = {
   apiKey: process.env.botToken || require('./config.json').botToken,
