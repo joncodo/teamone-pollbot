@@ -8,6 +8,8 @@ var config = {
 var currentAnswer = 2;
 var questionAsked = false;
 
+var polls = [];
+
 function getMathQuestion () {
   var number1 = Math.floor(Math.random()*1000 + 100);
   var number2 = Math.floor(Math.random()*1000 + 100);
@@ -18,20 +20,49 @@ function getMathQuestion () {
 api.incomingMessage = function incomingMessage (message, user) {
   console.log('The incoming message', message, user);
 
-  if(message.match(/\/math/)){
-    api.reply(getMathQuestion());
-    questionAsked = true;
-  }
-  else if(questionAsked){
-    if(message == currentAnswer){
-      api.reply('You are correct!');
-    }
-    else{
-      api.reply('Sorry, that is incorrect');
-    }
+  if(message.match(/help/)){
+    api.reply(`
+      You can set up a poll by responding with something like this:
 
-    questionAsked = false;
-    console.log('They did not say /math', message);
+      "poll: Where are we going for lunch? mcDonalds, burgerKing, wendys"
+      `);
+  } else if(message.match(/poll:/)){
+    // sanitize the string into an array
+    var question = message.trim().match(/poll: (.*\?)/)[1];
+    var answers = message.trim().match(/\?(.*)/)[1];
+    console.log(answers.split(' '));
+    var choices = [];
+    answers.split(',').forEach(function(item) {
+      if(item != ''){
+        choices.push({name: item.trim(), count: 0});
+      }
+    });
+
+    polls.push({question: question, choices: choices});
+
+    var reply = '@all ' + question + '\n';
+    choices.forEach(function(answer, index) {
+      reply += index + '. ' + answer.name + '\n';
+    });
+
+    api.reply(reply);
+
+  } else {
+
+    var currentPoll = polls[polls.length - 1];
+    currentPoll.choices.forEach(function(choice) {
+
+      if(message.match('\\b' + choice.name + '\\b')){
+        choice.count += 1;
+      }
+    });
+
+    var reply = currentPoll.question + '\n';
+    currentPoll.choices.forEach(function(choice, index) {
+      reply += index + '. ' + choice.name + ' - ' + choice.count +'\n';
+    });
+
+    api.reply(reply);
   }
 }
 
