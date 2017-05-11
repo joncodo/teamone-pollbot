@@ -1,5 +1,7 @@
 # Math Bot
 
+KEY=xxxxx ORG_ID=23343 node app.js
+
 Create a bot user:
 
 POST https://app.intellinote.net/rest/v2/bot?org_id=23343

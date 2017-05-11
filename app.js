@@ -1,8 +1,9 @@
 var api = require('./lib/botApi.js');
+var config = require('./config.json');
 
 var config = {
-  apiKey: process.env.KEY,
-  orgId: process.env.ORG_ID
+  apiKey: config.botToken,
+  orgId: config.orgId
 };
 
 var currentAnswer = 2;
@@ -38,7 +39,7 @@ api.incomingMessage = function incomingMessage (message, user) {
       }
     });
 
-    polls.push({question: question, choices: choices});
+    polls.push({question: question, choices: choices, workspaceId: user.workspaceId});
 
     var reply = '@all ' + question + '\n';
     choices.forEach(function(answer, index) {
@@ -49,9 +50,14 @@ api.incomingMessage = function incomingMessage (message, user) {
 
   } else {
 
-    var currentPoll = polls[polls.length - 1];
-    currentPoll.choices.forEach(function(choice) {
+    var currentPoll;
+    polls.forEach(function(poll) {
+      if(poll.workspaceId == user.workspaceId){
+        currentPoll = poll;
+      }
+    })
 
+    currentPoll.choices.forEach(function(choice) {
       if(message.match('\\b' + choice.name + '\\b')){
         choice.count += 1;
       }
