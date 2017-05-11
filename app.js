@@ -2,8 +2,8 @@ var api = require('./lib/botApi.js');
 var config = require('./config.json');
 
 var config = {
-  apiKey: config.botToken,
-  orgId: config.orgId
+  apiKey: process.env.botToken || require('./config.json').botToken,
+  orgId: process.env.botToken || require('./config.json').orgId
 };
 
 var currentAnswer = 2;

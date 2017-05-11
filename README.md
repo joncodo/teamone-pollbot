@@ -1,4 +1,4 @@
-# Math Bot
+# Poll bot
 
 KEY=xxxxx ORG_ID=23343 node app.js
 
@@ -16,3 +16,10 @@ response:
     "api_token": "xx",
     "api_token_uuid": "xxx"
 }
+
+
+## Set up on heroku
+
+10410  heroku create
+10411  heroku config:set orgId=23343 botToken=xxx
+10412  git push heroku master
